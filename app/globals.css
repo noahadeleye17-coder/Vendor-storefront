@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Color tokens — bold dark jade direction, chosen over the pale-sage
+     version. Class names (text-ink, bg-paper, etc.) stay the same
+     everywhere in the app; only what they resolve to has changed, so
+     this is the one place that needed to flip. */
+  --color-ink: #f3f5ef;         /* near-white — primary text on dark surfaces */
+  --color-paper: #0c211c;       /* deep jade-black — page background */
+  --color-jade: #1e8a73;        /* primary brand color, bright enough to read on dark */
+  --color-jade-light: #2bb08f;  /* hover / secondary accent */
+  --color-marigold: #f2a93b;    /* CTA + signature accent, used sparingly */
+  --color-on-marigold: #241b09; /* fixed dark text for on top of marigold — doesn't flip with theme */
+  --color-on-light: #0f2a24;    /* fixed dark text for literal white surfaces (cards, phone chrome) */
+  --color-line: rgba(243, 245, 239, 0.14); /* translucent hairline for dark surfaces */
+
+  /* Fonts are wired up via next/font in layout.js, which sets these vars */
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background-color: var(--color-paper);
+  background-image: radial-gradient(circle at 80% 0%, rgba(30, 138, 115, 0.25) 0%, transparent 45%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Visible keyboard focus everywhere — not just on inputs */
+:focus-visible {
+  outline: 2px solid var(--color-jade);
+  outline-offset: 2px;
+}
