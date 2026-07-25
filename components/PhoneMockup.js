@@ -35,7 +35,7 @@ export default function PhoneMockup({ className = '' }) {
             <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-marigold to-jade" />
             <div>
               <p className="font-display text-sm leading-tight text-onLight">Amaka&apos;s Closet</p>
-              <p className="text-[11px] text-onLight/50">yoursite.ng/store/amakas-closet</p>
+              <p className="text-[11px] text-onLight/50">shoplink.ng/store/amakas-closet</p>
             </div>
           </div>
 
