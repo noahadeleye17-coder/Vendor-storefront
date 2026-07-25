@@ -12,7 +12,7 @@ export default function CopyLinkButton({ url, className }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard API can fail on non-HTTPS/older browsers — fall back silently,
+      // Clipboard API can fail on non-HTTPS/older browsers - fall back silently,
       // the URL is still visible on screen for the vendor to select manually.
     }
   }

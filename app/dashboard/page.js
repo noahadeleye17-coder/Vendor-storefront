@@ -1,4 +1,4 @@
-// dashboard overimport Link from 'next/link';
+import Link from 'next/link';// dashboard overimport Link from 'next/link';
 import { createClient } from '@/lib/supabaseServer';
 import CopyLinkButton from '@/components/CopyLinkButton';
 import Button from '@/components/ui/Button';
@@ -65,4 +65,4 @@ export default async function DashboardOverviewPage() {
       </div>
     </div>
   );
-}view (view count, quick links)
+}
