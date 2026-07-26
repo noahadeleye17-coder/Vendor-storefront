@@ -113,16 +113,20 @@ export default function HomePage() {
                 viewport={{ once: true, amount: 0.5 }}
                 variants={fadeUp}
                 transition={{ delay: i * 0.1 }}
-                className="group relative overflow-hidden rounded-2xl border border-line p-6 transition-colors hover:border-jade/40"
               >
                 <div
-                  className="blob-drift pointer-events-none absolute -inset-8 rounded-full opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50"
-                  style={{ background: step.blob, animationDelay: `${i * 0.6}s` }}
-                />
-                <div className="relative">
-                  <span className={`font-mono text-sm ${step.accent}`}>{step.n}</span>
-                  <h3 className="mt-3 font-display text-xl text-ink">{step.title}</h3>
-                  <p className="mt-2 leading-relaxed text-ink/70">{step.body}</p>
+                  className="card-sway group relative overflow-hidden rounded-2xl border border-line p-6 transition-colors hover:border-jade/40"
+                  style={{ animationDelay: `${i * 0.3}s` }}
+                >
+                  <div
+                    className="blob-drift pointer-events-none absolute -inset-8 rounded-full opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50"
+                    style={{ background: step.blob, animationDelay: `${i * 0.6}s` }}
+                  />
+                  <div className="relative">
+                    <span className={`font-mono text-sm ${step.accent}`}>{step.n}</span>
+                    <h3 className="mt-3 font-display text-xl text-ink">{step.title}</h3>
+                    <p className="mt-2 leading-relaxed text-ink/70">{step.body}</p>
+                  </div>
                 </div>
               </motion.div>
             ))}

@@ -65,6 +65,21 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes card-sway {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(4px) rotate(0.6deg); }
+  50% { transform: translateX(0) rotate(0deg); }
+  75% { transform: translateX(-4px) rotate(-0.6deg); }
+}
+
+.card-sway {
+  animation: card-sway 6s ease-in-out infinite;
+}
+
+.card-sway:hover {
+  animation-play-state: paused;
+}
+
 @keyframes thread-pulse {
   0% { left: 0%; opacity: 0; }
   10% { opacity: 1; }
