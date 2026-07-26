@@ -1,4 +1,5 @@
-import Link from 'next/link';// dashboard overimport Link from 'next/link';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabaseServer';
 import CopyLinkButton from '@/components/CopyLinkButton';
 import Button from '@/components/ui/Button';
@@ -15,6 +16,10 @@ export default async function DashboardOverviewPage() {
     .select('business_name, slug, whatsapp_number, view_count')
     .eq('id', user.id)
     .single();
+
+  if (!vendor) {
+    redirect('/login');
+  }
 
   const { count: productCount } = await supabase
     .from('products')
