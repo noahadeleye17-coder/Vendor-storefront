@@ -50,3 +50,28 @@ body {
   outline: 2px solid var(--color-jade);
   outline-offset: 2px;
 }
+
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(10px, -12px) scale(1.05); }
+  66% { transform: translate(-8px, 10px) scale(0.97); }
+}
+
+.blob-drift {
+  animation: blob-drift 9s ease-in-out infinite;
+}
+
+.group:hover .blob-drift {
+  animation-play-state: paused;
+}
+
+@keyframes thread-pulse {
+  0% { left: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.thread-pulse {
+  animation: thread-pulse 4s linear infinite;
+}

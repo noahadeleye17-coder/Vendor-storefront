@@ -15,16 +15,22 @@ const steps = [
     n: '01',
     title: 'Sign up',
     body: 'Pick your store name and link. Takes under a minute — no verification, no waiting.',
+    accent: 'text-jade',
+    blob: '#1E8A73',
   },
   {
     n: '02',
     title: 'Add products',
     body: 'Name, price, a photo. Your storefront updates the moment you save.',
+    accent: 'text-marigold',
+    blob: '#F2A93B',
   },
   {
     n: '03',
     title: 'Share your link',
     body: 'Drop it in your WhatsApp status, bio, or group. Every visit is one tap from an order.',
+    accent: 'text-jade',
+    blob: '#2BB08F',
   },
 ];
 
@@ -93,6 +99,11 @@ export default function HomePage() {
             </h2>
           </motion.div>
 
+          <div className="relative mx-auto mb-10 hidden max-w-4xl md:block">
+            <div className="h-px w-full bg-line" />
+            <div className="thread-pulse absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-marigold" />
+          </div>
+
           <div className="grid gap-10 md:grid-cols-3 md:gap-8">
             {steps.map((step, i) => (
               <motion.div
@@ -102,11 +113,17 @@ export default function HomePage() {
                 viewport={{ once: true, amount: 0.5 }}
                 variants={fadeUp}
                 transition={{ delay: i * 0.1 }}
-                className="relative"
+                className="group relative overflow-hidden rounded-2xl border border-line p-6 transition-colors hover:border-jade/40"
               >
-                <span className="font-mono text-sm text-marigold">{step.n}</span>
-                <h3 className="mt-3 font-display text-xl text-ink">{step.title}</h3>
-                <p className="mt-2 leading-relaxed text-ink/70">{step.body}</p>
+                <div
+                  className="blob-drift pointer-events-none absolute -inset-8 rounded-full opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50"
+                  style={{ background: step.blob, animationDelay: `${i * 0.6}s` }}
+                />
+                <div className="relative">
+                  <span className={`font-mono text-sm ${step.accent}`}>{step.n}</span>
+                  <h3 className="mt-3 font-display text-xl text-ink">{step.title}</h3>
+                  <p className="mt-2 leading-relaxed text-ink/70">{step.body}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -154,8 +171,8 @@ export default function HomePage() {
       {/* ---------- Footer ---------- */}
       <footer className="border-t border-line py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-ink/50 sm:flex-row">
-          <p className="font-display text-ink">yourstore.ng</p>
-          <p>&copy; {new Date().getFullYear()} Vendor Storefront. Built for vendors across Nigeria.</p>
+          <p className="font-display text-ink">ShopLink</p>
+          <p>&copy; {new Date().getFullYear()} ShopLink. Built for vendors across Nigeria.</p>
         </div>
       </footer>
     </main>
