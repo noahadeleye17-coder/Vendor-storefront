@@ -40,7 +40,6 @@ html {
 body {
   background-color: var(--color-paper);
   background-image: radial-gradient(circle at 80% 0%, rgba(30, 138, 115, 0.25) 0%, transparent 45%);
-  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-body);
 }
