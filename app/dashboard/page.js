@@ -43,7 +43,7 @@ export default async function DashboardOverviewPage() {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-sm text-jade underline underline-offset-2"
+            className="min-w-0 break-all font-mono text-sm text-jade underline underline-offset-2"
           >
             {storeUrl}
           </a>

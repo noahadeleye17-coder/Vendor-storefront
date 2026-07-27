@@ -1,4 +1,4 @@
-// import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabaseServer';
 import DashboardNav from '@/components/DashboardNav';
 
