@@ -65,14 +65,16 @@ body {
 }
 
 @keyframes card-sway {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(4px) rotate(0.6deg); }
-  50% { transform: translateX(0) rotate(0deg); }
-  75% { transform: translateX(-4px) rotate(-0.6deg); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(4px, 0, 0); }
+  50% { transform: translate3d(0, 0, 0); }
+  75% { transform: translate3d(-4px, 0, 0); }
 }
 
 .card-sway {
   animation: card-sway 6s ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .card-sway:hover {
