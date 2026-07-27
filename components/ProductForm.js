@@ -1,4 +1,5 @@
-// ad'use client';
+// add/edit product form fields
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -160,4 +161,4 @@ export default function ProductForm({ mode, vendorId, initialProduct }) {
       </Button>
     </form>
   );
-}d/edit product form fields
+}
