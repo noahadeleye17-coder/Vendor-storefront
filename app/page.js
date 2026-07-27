@@ -85,7 +85,14 @@ export default function HomePage() {
       </section>
 
       {/* ---------- How it works ---------- */}
-      <section id="how-it-works" className="border-y border-line bg-white/[0.03] py-24">
+      <section
+        id="how-it-works"
+        className="py-24"
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent, rgba(255,255,255,0.03) 15%, rgba(255,255,255,0.03) 85%, transparent)',
+        }}
+      >
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             initial="hidden"
