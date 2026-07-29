@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import Button from './ui/Button';
 
@@ -12,6 +13,26 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // /dashboard already has its own auth-aware nav (DashboardNav, with
+  // Sign out), and /store/[slug] is a public storefront that isn't
+  // trying to sell the viewer on signing up. The "How it works /
+  // Contact" marketing links and "Log in / Get started" buttons don't
+  // apply on either — but the ShopLink logo/home link stays everywhere.
+  const isAppRoute = pathname?.startsWith('/dashboard') || pathname?.startsWith('/store');
+
+  if (isAppRoute) {
+    return (
+      <header className="sticky top-0 z-50 border-b border-line bg-paper/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center px-6 py-4">
+          <Link href="/" className="font-display text-xl text-ink">
+            Shop<span className="text-marigold">Link</span>
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/80 backdrop-blur-md">
