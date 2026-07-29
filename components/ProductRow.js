@@ -33,7 +33,11 @@ export default function ProductRow({ product }) {
   }
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-line p-4">
+    // flex-wrap + the actions block below being `w-full` on mobile is what
+    // pushes the toggle/Edit/Delete onto their own line on narrow screens
+    // instead of cramming everything into one row (previously the in-stock
+    // toggle was just hidden below the sm breakpoint — invisible on phone).
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-line p-4">
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white/5">
         {product.photo_url ? (
           <Image src={product.photo_url} alt={product.name} fill className="object-cover" />
@@ -49,22 +53,33 @@ export default function ProductRow({ product }) {
         <p className="font-mono text-sm text-jade">₦{formatPrice(product.price)}</p>
       </div>
 
-      <label className="hidden items-center gap-2 text-sm text-ink/70 sm:flex">
-        <input
-          type="checkbox"
-          checked={inStock}
-          onChange={toggleInStock}
-          className="h-4 w-4 rounded border-line accent-jade"
-        />
-        In stock
-      </label>
+      <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={inStock}
+          aria-label="In stock"
+          onClick={toggleInStock}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+            inStock ? 'bg-jade' : 'bg-line'
+          }`}
+        >
+          <span
+            className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-ink transition-transform ${
+              inStock ? 'translate-x-5' : 'translate-x-0'
+            }`}
+          />
+        </button>
 
-      <Button as={Link} href={`/dashboard/products/${product.id}`} variant="ghost" size="sm">
-        Edit
-      </Button>
-      <Button type="button" variant="ghost" size="sm" onClick={handleDelete} disabled={deleting}>
-        {deleting ? '…' : 'Delete'}
-      </Button>
+        <div className="flex items-center gap-2">
+          <Button as={Link} href={`/dashboard/products/${product.id}`} variant="ghost" size="sm">
+            Edit
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={handleDelete} disabled={deleting}>
+            {deleting ? '…' : 'Delete'}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
