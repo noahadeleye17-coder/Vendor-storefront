@@ -22,7 +22,7 @@ export default async function StorefrontPage({ params }) {
 
   const { data: vendor } = await supabase
     .from('vendors')
-    .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, is_published')
+    .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, theme_font, is_published')
     .eq('slug', params.slug)
     .eq('is_published', true)
     .single();

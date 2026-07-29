@@ -1,8 +1,9 @@
-// storefront top banner: logo, business name, whatsapp contact// storefront top banner: logo, business name, whatsapp contact
+// storefront top banner: logo, business name, whatsapp contact
 import Image from 'next/image';
+import { getFontFamily } from '@/lib/themePresets';
 
 export default function StorefrontHeader({ vendor }) {
-  const { business_name, logo_url, whatsapp_number, theme_color } = vendor;
+  const { business_name, logo_url, whatsapp_number, theme_color, theme_font } = vendor;
 
   return (
     <header className="flex flex-col items-center gap-4 border-b border-line py-10 text-center">
@@ -26,7 +27,12 @@ export default function StorefrontHeader({ vendor }) {
       </div>
 
       <div>
-        <h1 className="font-display text-2xl text-ink">{business_name}</h1>
+        <h1
+          className="font-display text-2xl text-ink"
+          style={{ fontFamily: theme_font ? getFontFamily(theme_font) : undefined }}
+        >
+          {business_name}
+        </h1>
         {whatsapp_number && (
           <p className="mt-1 font-mono text-sm text-ink/50">{whatsapp_number}</p>
         )}

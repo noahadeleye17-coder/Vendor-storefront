@@ -1,40 +1,29 @@
-// theme color/font picker used in dashboard settings
 'use client';
 
-const COLOR_PRESETS = [
-  { value: '#111827', label: 'Charcoal' },
-  { value: '#0F766E', label: 'Jade' },
-  { value: '#B45309', label: 'Marigold' },
-  { value: '#9D174D', label: 'Rose' },
-  { value: '#1E3A8A', label: 'Indigo' },
-  { value: '#78350F', label: 'Terracotta' },
-];
+import clsx from 'clsx';
+import { COLOR_PRESETS, FONT_PRESETS } from '@/lib/themePresets';
 
-const FONT_PRESETS = [
-  { value: 'inter', label: 'Inter — clean, modern' },
-  { value: 'playfair', label: 'Playfair — elegant, editorial' },
-  { value: 'space-grotesk', label: 'Space Grotesk — bold, tech' },
-  { value: 'work-sans', label: 'Work Sans — friendly, neutral' },
-];
-
+// Preset color/font picker for storefront branding. Fully controlled —
+// parent (SettingsForm) owns the state and passes the current values in.
 export default function ThemePicker({ color, font, onColorChange, onFontChange }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div>
         <p className="mb-2 font-body text-sm font-medium text-ink">Accent color</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {COLOR_PRESETS.map((preset) => (
             <button
-              key={preset.value}
+              key={preset.key}
               type="button"
-              aria-pressed={color === preset.value}
               onClick={() => onColorChange(preset.value)}
-              title={preset.label}
-              className={`h-9 w-9 rounded-full border-2 transition-transform ${
+              aria-label={preset.label}
+              aria-pressed={color === preset.value}
+              className={clsx(
+                'h-9 w-9 rounded-full border-2 transition-transform',
                 color === preset.value
-                  ? 'scale-110 border-ink'
+                  ? 'border-ink scale-110'
                   : 'border-transparent hover:scale-105'
-              }`}
+              )}
               style={{ backgroundColor: preset.value }}
             />
           ))}
@@ -42,21 +31,26 @@ export default function ThemePicker({ color, font, onColorChange, onFontChange }
       </div>
 
       <div>
-        <label htmlFor="themeFont" className="mb-1.5 block font-body text-sm font-medium text-ink">
-          Font style
-        </label>
-        <select
-          id="themeFont"
-          value={font}
-          onChange={(e) => onFontChange(e.target.value)}
-          className="w-full rounded-xl border border-line bg-white px-4 py-2.5 font-body text-onLight"
-        >
+        <p className="mb-2 font-body text-sm font-medium text-ink">Storefront font</p>
+        <div className="flex flex-wrap gap-2">
           {FONT_PRESETS.map((preset) => (
-            <option key={preset.value} value={preset.value}>
+            <button
+              key={preset.key}
+              type="button"
+              onClick={() => onFontChange(preset.key)}
+              aria-pressed={font === preset.key}
+              style={{ fontFamily: preset.family }}
+              className={clsx(
+                'rounded-xl border px-4 py-2 text-sm transition-colors',
+                font === preset.key
+                  ? 'border-jade bg-jade/10 text-ink'
+                  : 'border-line text-ink/70 hover:border-ink/40'
+              )}
+            >
               {preset.label}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
       </div>
     </div>
   );
