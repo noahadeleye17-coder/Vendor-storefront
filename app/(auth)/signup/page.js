@@ -6,7 +6,39 @@ import Link from 'next/link';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabaseClient';
-import { slugify } from '@/lib/slugify';
+import { slugify, slugWithSuffix, isValidSlug } from '@/lib/slugify';
+
+const MAX_SLUG_ATTEMPTS = 5;
+
+// Finds a slug that isn't already taken, starting from the business name
+// and falling back to random suffixes on collision. Also handles the
+// case where the business name alone doesn't produce a valid slug (e.g.
+// too short, or entirely non-alphanumeric, like "24/7" or "!!!").
+async function findAvailableSlug(businessName) {
+  let base = slugify(businessName);
+  if (!isValidSlug(base)) {
+    base = 'store';
+  }
+
+  let candidate = base;
+
+  for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt++) {
+    const { data: existing } = await supabase
+      .from('vendors')
+      .select('id')
+      .eq('slug', candidate)
+      .maybeSingle();
+
+    if (!existing) {
+      return candidate;
+    }
+
+    candidate = slugWithSuffix(base);
+  }
+
+  // Extremely unlikely with a random suffix, but don't loop forever.
+  throw new Error('Could not generate a unique store link. Please try a different business name.');
+}
 
 export default function SignupPage() {
   const router = useRouter();
@@ -43,21 +75,41 @@ export default function SignupPage() {
       return;
     }
 
-    const baseSlug = slugify(form.businessName);
-    const { error: vendorError } = await supabase.from('vendors').insert({
-      id: userId,
-      business_name: form.businessName,
-      slug: baseSlug,
-      whatsapp_number: form.whatsappNumber,
-    });
+    try {
+      const slug = await findAvailableSlug(form.businessName);
 
-    if (vendorError) {
-      setError(vendorError.message);
+      const { error: vendorError } = await supabase.from('vendors').insert({
+        id: userId,
+        business_name: form.businessName,
+        slug,
+        whatsapp_number: form.whatsappNumber,
+      });
+
+      if (vendorError) {
+        // Safety net for the rare race condition where two people grab the
+        // same slug between our uniqueness check and this insert — the DB's
+        // unique constraint (schema.sql) is what actually prevents the
+        // collision; this just gives a clean retry instead of a raw
+        // Postgres error.
+        if (vendorError.code === '23505') {
+          const retrySlug = await findAvailableSlug(`${form.businessName}-${Date.now()}`);
+          const { error: retryError } = await supabase.from('vendors').insert({
+            id: userId,
+            business_name: form.businessName,
+            slug: retrySlug,
+            whatsapp_number: form.whatsappNumber,
+          });
+          if (retryError) throw retryError;
+        } else {
+          throw vendorError;
+        }
+      }
+
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
       setLoading(false);
-      return;
     }
-
-    router.push('/dashboard');
   }
 
   return (
