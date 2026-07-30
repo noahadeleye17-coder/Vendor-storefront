@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
+import { getFriendlyError } from '@/lib/friendlyError';
 import Input from './ui/Input';
 import Button from './ui/Button';
 
@@ -82,9 +83,10 @@ export default function ProductForm({ mode, vendorId, initialProduct }) {
       router.refresh();
     } catch (err) {
       // The Phase 1 free-tier product cap (20) is enforced by a database
-      // trigger (see supabase/schema.sql) — this is the message that
-      // surfaces if a vendor hits it.
-      setError(err.message || 'Something went wrong. Please try again.');
+      // trigger (see supabase/schema.sql) — getFriendlyError maps that
+      // trigger's raw message to plain language, same as any other
+      // Supabase/Postgres error surfaced here.
+      setError(getFriendlyError(err));
       setLoading(false);
     }
   }

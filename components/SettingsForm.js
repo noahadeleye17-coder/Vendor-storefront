@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { slugify, isValidSlug } from '@/lib/slugify';
+import { getFriendlyError } from '@/lib/friendlyError';
 import Input from './ui/Input';
 import Button from './ui/Button';
 import ThemePicker from './ThemePicker';
@@ -73,7 +74,7 @@ export default function SettingsForm({ vendor, appUrl }) {
       setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(getFriendlyError(err));
     } finally {
       setLoading(false);
     }

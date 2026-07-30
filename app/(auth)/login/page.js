@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabaseClient';
+import { getFriendlyError } from '@/lib/friendlyError';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function LoginPage() {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(getFriendlyError(signInError));
       setLoading(false);
       return;
     }

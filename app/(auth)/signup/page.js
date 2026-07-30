@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabaseClient';
 import { slugify, slugWithSuffix, isValidSlug } from '@/lib/slugify';
+import { getFriendlyError } from '@/lib/friendlyError';
 
 const MAX_SLUG_ATTEMPTS = 5;
 
@@ -61,7 +62,7 @@ export default function SignupPage() {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(getFriendlyError(signUpError));
       setLoading(false);
       return;
     }
@@ -107,7 +108,7 @@ export default function SignupPage() {
 
       router.push('/dashboard');
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(getFriendlyError(err));
       setLoading(false);
     }
   }
