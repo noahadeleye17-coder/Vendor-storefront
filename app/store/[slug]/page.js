@@ -50,6 +50,15 @@ export default async function StorefrontPage({ params }) {
     notFound();
   }
 
+  // Count real customer visits only — never the owner previewing their
+  // own (possibly unpublished) store. Uses a SECURITY DEFINER function
+  // (see schema.sql) since anonymous visitors have no RLS-matching
+  // session to update the vendors row directly. Failure here shouldn't
+  // break the page for the visitor, so it's swallowed rather than thrown.
+  if (!isPreview) {
+    await supabase.rpc('increment_view_count', { vendor_slug: vendor.slug }).catch(() => {});
+  }
+
   const { data: products } = await supabase
     .from('products')
     .select('id, name, price, photo_url, in_stock')

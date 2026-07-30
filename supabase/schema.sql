@@ -75,6 +75,22 @@ drop trigger if exists trg_products_touch on products;
 create trigger trg_products_touch before update on products
   for each row execute function touch_updated_at();
 
+-- ---------- storefront view counter ----------
+-- SECURITY DEFINER so anonymous visitors (who have no RLS-matching
+-- session) can still atomically bump the counter for a published
+-- vendor, without opening up general write access to the table.
+create or replace function increment_view_count(vendor_slug text)
+returns void as $$
+begin
+  update vendors
+  set view_count = view_count + 1
+  where slug = vendor_slug
+    and is_published = true;
+end;
+$$ language plpgsql security definer;
+
+grant execute on function increment_view_count(text) to anon, authenticated;
+
 -- ============================================================
 -- Row Level Security
 -- Public storefront reads go through the anon key, so published
