@@ -114,6 +114,14 @@ create policy "public can view products of published vendors"
     )
   );
 
+-- A vendor can always read their own products, even while unpublished —
+-- needed for the dashboard product list and the storefront preview to
+-- keep working after a vendor unpublishes. Combines with the policy
+-- above via OR, so this only adds access, never restricts it.
+create policy "vendor can view own products"
+  on products for select
+  using (auth.uid() = vendor_id);
+
 -- A vendor can manage only their own products (dashboard CRUD)
 create policy "vendor can insert own products"
   on products for insert

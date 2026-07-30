@@ -12,7 +12,6 @@ export async function generateMetadata({ params }) {
     .from('vendors')
     .select('business_name')
     .eq('slug', params.slug)
-    .eq('is_published', true)
     .single();
 
   return { title: vendor ? `${vendor.business_name} — Storefront` : 'Storefront' };
@@ -21,14 +20,33 @@ export async function generateMetadata({ params }) {
 export default async function StorefrontPage({ params }) {
   const supabase = createClient();
 
+  // No `.eq('is_published', true)` filter here — row level security
+  // (schema.sql) already handles who can see what: "public can view
+  // published vendors" lets anyone read a live store, and "vendor can
+  // view own record" separately lets the owner read their own row even
+  // while unpublished. If neither policy matches, the query below just
+  // returns no row and we 404, same end result as filtering here.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: vendor } = await supabase
     .from('vendors')
     .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, theme_font, is_published')
     .eq('slug', params.slug)
-    .eq('is_published', true)
     .single();
 
   if (!vendor) {
+    notFound();
+  }
+
+  const isOwner = user?.id === vendor.id;
+  const isPreview = !vendor.is_published;
+
+  // Belt-and-suspenders: RLS already guarantees a stranger's query above
+  // returns no row for an unpublished store, but check explicitly too so
+  // an owner who's unpublished never sees a "live" page with no warning.
+  if (isPreview && !isOwner) {
     notFound();
   }
 
@@ -48,6 +66,12 @@ export default async function StorefrontPage({ params }) {
         backgroundImage: `radial-gradient(circle at 80% 0%, ${theme.glow} 0%, transparent 45%)`,
       }}
     >
+      {isPreview && (
+        <div className="border-b border-line bg-marigold px-4 py-2 text-center text-sm font-medium text-onMarigold">
+          Preview mode — this storefront is hidden from customers until you publish it in Settings.
+        </div>
+      )}
+
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 pb-16">
         <StorefrontHeader vendor={vendor} />
 

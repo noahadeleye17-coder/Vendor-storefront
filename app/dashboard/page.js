@@ -13,7 +13,7 @@ export default async function DashboardOverviewPage() {
 
   const { data: vendor } = await supabase
     .from('vendors')
-    .select('business_name, slug, whatsapp_number, view_count')
+    .select('business_name, slug, whatsapp_number, view_count, is_published')
     .eq('id', user.id)
     .single();
 
@@ -49,6 +49,12 @@ export default async function DashboardOverviewPage() {
           </a>
           <CopyLinkButton url={storeUrl} />
         </div>
+        {!vendor.is_published && (
+          <p className="mt-3 text-xs text-marigold">
+            Your storefront is currently hidden from customers. This link still works for you as a
+            preview — head to Settings to publish when you're ready.
+          </p>
+        )}
       </div>
 
       {/* quick stats */}
