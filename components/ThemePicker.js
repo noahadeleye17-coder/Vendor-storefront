@@ -20,6 +20,7 @@ export default function ThemePicker({ color, font, onColorChange, onFontChange }
               aria-pressed={color === preset.value}
               className={clsx(
                 'h-9 w-9 rounded-full border-2 transition-transform',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade',
                 color === preset.value
                   ? 'border-ink scale-110'
                   : 'border-transparent hover:scale-105'
@@ -42,6 +43,7 @@ export default function ThemePicker({ color, font, onColorChange, onFontChange }
               style={{ fontFamily: preset.family }}
               className={clsx(
                 'rounded-xl border px-4 py-2 text-sm transition-colors',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade',
                 font === preset.key
                   ? 'border-jade bg-jade/10 text-ink'
                   : 'border-line text-ink/70 hover:border-ink/40'

@@ -4,6 +4,7 @@ const variants = {
   primary: 'bg-jade text-paper hover:bg-jade-light shadow-card',
   marigold: 'bg-marigold text-onMarigold hover:brightness-105 shadow-card',
   ghost: 'bg-transparent text-ink border border-line hover:border-ink',
+  danger: 'bg-red-500 text-white hover:bg-red-600 shadow-card',
 };
 
 const sizes = {

@@ -82,7 +82,7 @@ export default async function StorefrontPage({ params }) {
       )}
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 pb-16">
-        <StorefrontHeader vendor={vendor} />
+        <StorefrontHeader vendor={vendor} mode={theme.mode} />
 
         {products && products.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -99,6 +99,7 @@ export default async function StorefrontPage({ params }) {
           <EmptyState
             title="No products yet"
             description={`${vendor.business_name} hasn't added any products to this storefront yet. Check back soon.`}
+            mode={theme.mode}
           />
         )}
       </div>
