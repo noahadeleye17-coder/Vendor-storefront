@@ -73,12 +73,24 @@ export default async function StorefrontPage({ params }) {
 
   const theme = getThemePreset(vendor.theme_color);
 
+  // Soft counter-glow from the opposite corner, independent of the vendor's
+  // accent color, so the gradient reads as a deliberate two-tone effect
+  // rather than one flat smudge in a single corner.
+  const counterGlow = theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 31, 0.05)';
+
+  // Dot-grid tint, adapted to mode so it's visible but subtle on either a
+  // dark or a light page.
+  const dotColor = theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 31, 0.07)';
+
   return (
     <div
       className="min-h-screen"
       style={{
         backgroundColor: theme.bg,
-        backgroundImage: `radial-gradient(circle at 80% 0%, ${theme.glow} 0%, transparent 45%)`,
+        backgroundImage: [
+          `radial-gradient(circle at 80% 0%, ${theme.glow} 0%, transparent 50%)`,
+          `radial-gradient(circle at 10% 100%, ${counterGlow} 0%, transparent 60%)`,
+        ].join(', '),
       }}
     >
       {isPreview && (
@@ -88,7 +100,24 @@ export default async function StorefrontPage({ params }) {
       )}
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 pb-16">
-        <StorefrontHeader vendor={vendor} mode={theme.mode} />
+        {/* Dot-grid texture, confined to the header zone and faded out via
+            a mask before it reaches the product grid — adds texture to the
+            hero without competing with product photos for attention. */}
+        <div className="relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(${dotColor} 1px, transparent 1px)`,
+              backgroundSize: '18px 18px',
+              maskImage: 'linear-gradient(to bottom, black, transparent)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)',
+            }}
+          />
+          <div className="relative">
+            <StorefrontHeader vendor={vendor} mode={theme.mode} />
+          </div>
+        </div>
 
         {products && products.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
