@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Copy, Check } from 'lucide-react';
 import Button from './ui/Button';
 
 export default function CopyLinkButton({ url, className }) {
@@ -18,7 +19,14 @@ export default function CopyLinkButton({ url, className }) {
   }
 
   return (
-    <Button type="button" variant="ghost" size="sm" onClick={handleCopy} className={className}>
+    <Button
+      type="button"
+      variant="marigold"
+      size="md"
+      onClick={handleCopy}
+      className={className}
+    >
+      {copied ? <Check size={18} /> : <Copy size={18} />}
       {copied ? 'Copied!' : 'Copy link'}
     </Button>
   );
