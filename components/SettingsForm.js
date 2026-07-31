@@ -84,34 +84,47 @@ export default function SettingsForm({ vendor, appUrl }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-lg flex-col gap-6">
-      <Input
-        id="businessName"
-        label="Business name"
-        required
-        value={form.businessName}
-        onChange={update('businessName')}
-      />
+      <div className="flex flex-col gap-6 rounded-2xl border border-line p-6">
+        <div>
+          <h2 className="font-display text-lg text-ink">Store details</h2>
+          <p className="mt-0.5 text-sm text-ink/60">Update your storefront's details, look and visibility.</p>
+        </div>
 
-      <div>
-        <Input id="slug" label="Store link" required value={form.slug} onChange={update('slug')} />
-        <p className="mt-1.5 break-all font-mono text-xs text-ink/50">{storeUrl}</p>
+        <Input
+          id="businessName"
+          label="Business name"
+          required
+          value={form.businessName}
+          onChange={update('businessName')}
+        />
+
+        <div>
+          <Input id="slug" label="Store link" required value={form.slug} onChange={update('slug')} />
+          <p className="mt-1.5 break-all font-mono text-xs text-ink/50">{storeUrl}</p>
+        </div>
+
+        <Input
+          id="whatsappNumber"
+          label="WhatsApp number"
+          type="tel"
+          required
+          value={form.whatsappNumber}
+          onChange={update('whatsappNumber')}
+        />
       </div>
 
-      <Input
-        id="whatsappNumber"
-        label="WhatsApp number"
-        type="tel"
-        required
-        value={form.whatsappNumber}
-        onChange={update('whatsappNumber')}
-      />
-
-      <ThemePicker
-        color={form.themeColor}
-        font={form.themeFont}
-        onColorChange={(value) => setForm((f) => ({ ...f, themeColor: value }))}
-        onFontChange={(key) => setForm((f) => ({ ...f, themeFont: key }))}
-      />
+      <div className="flex flex-col gap-5 rounded-2xl border border-line p-6">
+        <div>
+          <h2 className="font-display text-lg text-ink">Appearance</h2>
+          <p className="mt-0.5 text-sm text-ink/60">Pick the accent and typography customers see.</p>
+        </div>
+        <ThemePicker
+          color={form.themeColor}
+          font={form.themeFont}
+          onColorChange={(value) => setForm((f) => ({ ...f, themeColor: value }))}
+          onFontChange={(key) => setForm((f) => ({ ...f, themeFont: key }))}
+        />
+      </div>
 
       <div className="flex items-center justify-between rounded-2xl border border-line p-4">
         <div>

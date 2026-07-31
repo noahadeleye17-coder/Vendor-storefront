@@ -9,7 +9,7 @@ export default function ThemePicker({ color, font, onColorChange, onFontChange }
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="mb-2 font-body text-sm font-medium text-ink">Accent color</p>
+        <p className="mb-2 font-body text-xs font-medium uppercase tracking-wider text-ink/60">Accent color</p>
         <div className="flex flex-wrap gap-3">
           {COLOR_PRESETS.map((preset) => (
             <button
@@ -32,7 +32,7 @@ export default function ThemePicker({ color, font, onColorChange, onFontChange }
       </div>
 
       <div>
-        <p className="mb-2 font-body text-sm font-medium text-ink">Storefront font</p>
+        <p className="mb-2 font-body text-xs font-medium uppercase tracking-wider text-ink/60">Storefront font</p>
         <div className="flex flex-wrap gap-2">
           {FONT_PRESETS.map((preset) => (
             <button
