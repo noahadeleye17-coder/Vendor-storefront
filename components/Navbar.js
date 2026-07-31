@@ -24,7 +24,12 @@ export default function Navbar() {
 
   if (isAppRoute) {
     return (
-      <header className="sticky top-0 z-50 border-b border-line bg-paper/80 backdrop-blur-md">
+      // Solid background here, not the translucent/blurred bar the full
+      // marketing header uses below — a storefront's own theme can be a
+      // light color, and a translucent bar lets that page color bleed
+      // through and wash out the near-white "Shop" text. Solid keeps this
+      // bar's contrast independent of whatever page it's sitting on top of.
+      <header className="sticky top-0 z-50 border-b border-line bg-paper">
         <div className="mx-auto flex max-w-6xl items-center px-6 py-4">
           <Link href="/" className="font-display text-xl text-ink">
             Shop<span className="text-marigold">Link</span>

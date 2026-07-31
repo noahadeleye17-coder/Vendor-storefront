@@ -12,7 +12,11 @@ export default function StorefrontHeader({ vendor, mode = 'dark' }) {
       <div
         className={clsx(
           'flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border shadow-card',
-          isLight ? 'border-line bg-onLight/10' : 'border-line bg-white/60'
+          // Dark mode: a soft translucent white circle reads fine against a
+          // deep background. Light mode needs a solid, opaque fill instead —
+          // a faint tint here (what this used to be) has almost no contrast
+          // against an already-pale page, so the circle basically disappears.
+          isLight ? 'border-line bg-white' : 'border-line bg-white/60'
         )}
         style={{ borderColor: theme_color || undefined }}
       >
@@ -28,7 +32,10 @@ export default function StorefrontHeader({ vendor, mode = 'dark' }) {
           <span
             className={clsx(
               'font-display text-2xl',
-              isLight ? 'text-onLight/40' : 'text-ink/40'
+              // Same reasoning: dark mode's /40 white-on-black is a deliberate
+              // soft touch, but the same amount of fade on dark-on-light text
+              // reads as "barely there" instead of "subtle".
+              isLight ? 'text-onLight/70' : 'text-ink/40'
             )}
           >
             {business_name?.charAt(0)?.toUpperCase()}
@@ -47,7 +54,7 @@ export default function StorefrontHeader({ vendor, mode = 'dark' }) {
           <p
             className={clsx(
               'mt-1 font-mono text-sm',
-              isLight ? 'text-onLight/60' : 'text-ink/50'
+              isLight ? 'text-onLight/70' : 'text-ink/50'
             )}
           >
             {whatsapp_number}

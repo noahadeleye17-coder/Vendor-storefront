@@ -11,6 +11,10 @@ export default async function DashboardOverviewPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) {
+    redirect('/login');
+  }
+
   const { data: vendor } = await supabase
     .from('vendors')
     .select('business_name, slug, whatsapp_number, view_count, is_published')
