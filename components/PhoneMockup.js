@@ -29,14 +29,28 @@ export default function PhoneMockup({ className = '' }) {
       <div className="relative mx-auto w-[280px] rounded-[2.5rem] border-[10px] border-black bg-black shadow-soft">
         <div className="absolute left-1/2 top-0 z-10 h-5 w-28 -translate-x-1/2 rounded-b-2xl bg-black" />
 
-        <div className="relative h-[560px] overflow-hidden rounded-[1.75rem] bg-paper">
-          {/* mini storefront header */}
-          <div className="flex items-center gap-2 border-b border-line bg-white/70 px-4 py-3">
-            <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-marigold to-jade" />
+        <div className="relative h-[600px] overflow-hidden rounded-[1.75rem] bg-paper">
+          {/* mini storefront header — mirrors the real public storefront's
+              centered logo / name / WhatsApp-pill layout, just condensed
+              for a 280px-wide screen. pt-8 clears the notch above it. */}
+          <div className="flex flex-col items-center gap-1.5 border-b border-line bg-white/70 px-4 pb-3 pt-8 text-center">
+            <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-marigold to-jade shadow-card" />
+            <p className="font-display text-sm leading-tight text-onLight">Amaka&apos;s Closet</p>
+            <p className="rounded-full border border-onLight/15 px-2.5 py-0.5 font-mono text-[10px] text-onLight/60">
+              +234 801 234 5678
+            </p>
+          </div>
+
+          {/* catalog section header, mirroring the real "Catalog · N items"
+              row + "Open now" badge above the product grid */}
+          <div className="flex items-center justify-between px-3 pt-3">
             <div>
-              <p className="font-display text-sm leading-tight text-onLight">Amaka&apos;s Closet</p>
-              <p className="text-[11px] text-onLight/50">shoplink.ng/store/amakas-closet</p>
+              <p className="font-display text-xs leading-tight text-onLight">Catalog</p>
+              <p className="text-[10px] text-onLight/50">{MOCK_PRODUCTS.length} items available</p>
             </div>
+            <span className="rounded-full bg-jade/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide text-jade">
+              Open now
+            </span>
           </div>
 
           {/* product grid, gently drifting to feel alive */}
@@ -46,8 +60,12 @@ export default function PhoneMockup({ className = '' }) {
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           >
             {MOCK_PRODUCTS.map((p) => (
-              <div key={p.name} className="overflow-hidden rounded-xl border border-line bg-white">
-                <div className={`aspect-square w-full bg-gradient-to-br ${p.swatch}`} />
+              <div key={p.name} className="overflow-hidden rounded-2xl border border-line bg-white">
+                <div className={`relative aspect-square w-full bg-gradient-to-br ${p.swatch}`}>
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-jade/90 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-wide text-paper">
+                    In stock
+                  </span>
+                </div>
                 <div className="p-2">
                   <p className="truncate text-[11px] font-medium text-onLight">{p.name}</p>
                   <p className="font-mono text-[11px] text-jade">₦{p.price}</p>
