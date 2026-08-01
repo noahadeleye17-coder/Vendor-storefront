@@ -1,5 +1,6 @@
 // public-facing storefront rendered by vendor slug
 import { notFound } from 'next/navigation';
+import clsx from 'clsx';
 import { createClient } from '@/lib/supabaseServer';
 import StorefrontHeader from '@/components/StorefrontHeader';
 import ProductCard from '@/components/ProductCard';
@@ -81,6 +82,7 @@ export default async function StorefrontPage({ params }) {
   // Dot-grid tint, adapted to mode so it's visible but subtle on either a
   // dark or a light page.
   const dotColor = theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 31, 0.07)';
+  const isPreviewText = theme.mode === 'light' ? 'text-onLight' : 'text-ink';
 
   return (
     <div
@@ -99,44 +101,87 @@ export default async function StorefrontPage({ params }) {
         </div>
       )}
 
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 pb-16">
-        {/* Dot-grid texture, confined to the header zone and faded out via
-            a mask before it reaches the product grid — adds texture to the
-            hero without competing with product photos for attention. */}
-        <div className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(${dotColor} 1px, transparent 1px)`,
-              backgroundSize: '18px 18px',
-              maskImage: 'linear-gradient(to bottom, black, transparent)',
-              WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)',
-            }}
-          />
-          <div className="relative">
-            <StorefrontHeader vendor={vendor} mode={theme.mode} />
+      <div className="mx-auto max-w-2xl px-4 pb-16 pt-6">
+        <div className="mb-4 flex items-center justify-between text-sm">
+          <span className={clsx('font-display', isPreviewText)}>
+            Shop<span className="text-marigold">Link</span>
+          </span>
+          <span className={clsx('font-mono text-xs uppercase tracking-widest', isPreviewText, 'opacity-60')}>
+            Powered by ShopLink
+          </span>
+        </div>
+
+        <div className="overflow-hidden rounded-3xl border border-line">
+          {/* Dot-grid texture, confined to the header zone and faded out via
+              a mask before it reaches the product grid — adds texture to the
+              hero without competing with product photos for attention. */}
+          <div className="relative overflow-hidden border-b border-line px-4">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage: `radial-gradient(${dotColor} 1px, transparent 1px)`,
+                backgroundSize: '18px 18px',
+                maskImage: 'linear-gradient(to bottom, black, transparent)',
+                WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)',
+              }}
+            />
+            <div className="relative">
+              <StorefrontHeader vendor={vendor} mode={theme.mode} isOwner={isOwner} />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className={clsx('font-display text-xl', theme.mode === 'light' ? 'text-onLight' : 'text-ink')}>
+                  Catalog
+                </h2>
+                <p className={clsx('text-sm', theme.mode === 'light' ? 'text-onLight/60' : 'text-ink/50')}>
+                  {products?.length ?? 0} item{products?.length === 1 ? '' : 's'} available
+                </p>
+              </div>
+              {vendor.is_published && (
+                <span className="rounded-full bg-jade/10 px-3 py-1 font-mono text-xs uppercase tracking-wide text-jade">
+                  Open now
+                </span>
+              )}
+            </div>
+
+            {products && products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    whatsappNumber={vendor.whatsapp_number}
+                    storeName={vendor.business_name}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                title="No products yet"
+                description={`${vendor.business_name} hasn't added any products to this storefront yet. Check back soon.`}
+                mode={theme.mode}
+              />
+            )}
           </div>
         </div>
 
-        {products && products.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                whatsappNumber={vendor.whatsapp_number}
-                storeName={vendor.business_name}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="No products yet"
-            description={`${vendor.business_name} hasn't added any products to this storefront yet. Check back soon.`}
-            mode={theme.mode}
-          />
-        )}
+        <div className="mt-6 rounded-3xl border border-line px-6 py-8 text-center">
+          <h3 className={clsx('font-display text-lg', theme.mode === 'light' ? 'text-onLight' : 'text-ink')}>
+            No account needed
+          </h3>
+          <p className={clsx('mx-auto mt-2 max-w-sm text-sm', theme.mode === 'light' ? 'text-onLight/60' : 'text-ink/60')}>
+            Tap any product and WhatsApp opens with your order already written out. Pay and arrange
+            delivery directly with the vendor.
+          </p>
+        </div>
+
+        <p className={clsx('mt-8 text-center text-xs', theme.mode === 'light' ? 'text-onLight/40' : 'text-ink/40')}>
+          &copy; {new Date().getFullYear()} {vendor.business_name} · Storefront by ShopLink
+        </p>
       </div>
     </div>
   );

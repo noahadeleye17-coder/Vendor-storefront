@@ -26,7 +26,7 @@ export default function WhatsAppOrderButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-jade px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-jade-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full bg-marigold px-4 py-2.5 text-sm font-medium text-onMarigold transition-all hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jade ${className}`}
     >
       <WhatsAppGlyph className="h-4 w-4" />
       Order on WhatsApp

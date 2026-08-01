@@ -20,7 +20,11 @@ export default function ProductCard({ product, whatsappNumber, storeName }) {
             No photo
           </div>
         )}
-        {!in_stock && (
+        {in_stock ? (
+          <span className="absolute left-2 top-2 rounded-full bg-jade/90 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-paper">
+            In stock
+          </span>
+        ) : (
           <span className="absolute left-2 top-2 rounded-full bg-ink/80 px-2.5 py-1 text-xs text-paper font-body">
             Out of stock
           </span>
