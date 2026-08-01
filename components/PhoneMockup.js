@@ -29,7 +29,7 @@ export default function PhoneMockup({ className = '' }) {
       <div className="relative mx-auto w-[280px] rounded-[2.5rem] border-[10px] border-black bg-black shadow-soft">
         <div className="absolute left-1/2 top-0 z-10 h-5 w-28 -translate-x-1/2 rounded-b-2xl bg-black" />
 
-        <div className="relative h-[660px] overflow-hidden rounded-[1.75rem] bg-paper">
+        <div className="relative h-[620px] overflow-hidden rounded-[1.75rem] bg-paper">
           {/* mini storefront header — mirrors the real public storefront's
               centered logo / name / WhatsApp-pill layout, just condensed
               for a 280px-wide screen. pt-8 clears the notch above it. */}
