@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { Check } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import PhoneMockup from '@/components/PhoneMockup';
 
@@ -34,6 +35,15 @@ const steps = [
   },
 ];
 
+const features = [
+  'No forms or passwords',
+  'Orders in your chat',
+  'Works on any phone',
+  'Your own store link',
+  'Prices in naira',
+  'Free up to 20 products',
+];
+
 export default function HomePage() {
   return (
     <main className="overflow-hidden">
@@ -47,7 +57,7 @@ export default function HomePage() {
         >
           <motion.p
             variants={fadeUp}
-            className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-jade"
+            className="mb-4 inline-block rounded-full border border-line px-4 py-1.5 font-mono text-xs uppercase tracking-[0.15em] text-jade"
           >
             WhatsApp-native storefronts
           </motion.p>
@@ -66,13 +76,16 @@ export default function HomePage() {
             straight in your WhatsApp chat. No app to install, no account for them to make.
           </motion.p>
           <motion.div variants={fadeUp} className="mt-9 flex flex-col items-center gap-3 sm:flex-row md:items-start">
-            <Button as={Link} href="/signup" variant="primary" size="lg">
+            <Button as={Link} href="/signup" variant="marigold" size="lg" className="w-full sm:w-auto">
               Get started — it&apos;s free
             </Button>
-            <Button as={Link} href="#how-it-works" variant="ghost" size="lg">
+            <Button as={Link} href="#how-it-works" variant="ghost" size="lg" className="w-full sm:w-auto">
               See how it works
             </Button>
           </motion.div>
+          <motion.p variants={fadeUp} className="mt-4 font-mono text-xs text-ink/40">
+            Free forever up to 20 products · No card required
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -101,6 +114,7 @@ export default function HomePage() {
             variants={fadeUp}
             className="mx-auto mb-16 max-w-xl text-center"
           >
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.15em] text-jade">How it works</p>
             <h2 className="font-display text-3xl text-ink sm:text-4xl">
               Three steps. That&apos;s the whole setup.
             </h2>
@@ -148,32 +162,43 @@ export default function HomePage() {
           whileInView="show"
           viewport={{ once: true, amount: 0.4 }}
           variants={fadeUp}
-          className="mx-auto max-w-2xl text-center"
+          className="mx-auto max-w-2xl"
         >
+          <p className="mb-3 font-mono text-xs uppercase tracking-[0.15em] text-jade">Why ShopLink</p>
           <h2 className="font-display text-3xl text-ink sm:text-4xl">
             Your customers don&apos;t sign up for anything.
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/70">
             They browse your storefront, tap a product, and WhatsApp opens with their order
-            already typed out. No forms, no passwords — just a message to you, the way they&apos;d
-            already reach out.
+            already typed out — the way they&apos;d already reach out.
           </p>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2">
+            {features.map((feature) => (
+              <div
+                key={feature}
+                className="flex items-center gap-3 rounded-2xl border border-line px-4 py-3.5"
+              >
+                <Check className="h-4 w-4 shrink-0 text-jade" />
+                <span className="text-sm text-ink/80">{feature}</span>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </section>
 
       {/* ---------- Final CTA ---------- */}
-      <section className="bg-jade py-20">
+      <section className="mx-auto max-w-6xl px-6 pb-24">
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.5 }}
           variants={fadeUp}
-          className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center"
+          className="flex flex-col items-center gap-4 rounded-3xl border border-line px-6 py-16 text-center"
         >
-          <h2 className="font-display text-3xl text-paper sm:text-4xl">
-            Ready to open your store?
-          </h2>
-          <Button as={Link} href="/signup" variant="marigold" size="lg">
+          <h2 className="font-display text-3xl text-ink sm:text-4xl">Ready to open your store?</h2>
+          <p className="max-w-md text-ink/70">Set it up in five minutes and start sharing your link today.</p>
+          <Button as={Link} href="/signup" variant="marigold" size="lg" className="mt-2">
             Get started — it&apos;s free
           </Button>
         </motion.div>
