@@ -26,13 +26,15 @@ export default async function DashboardOverviewPage() {
     redirect('/login');
   }
 
-  const { count: productCount } = await supabase
+  const { count: productCount, error: productCountError } = await supabase
     .from('products')
     .select('id', { count: 'exact', head: true })
     .eq('vendor_id', user.id);
 
   const storeUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/store/${vendor.slug}`;
-  const products = productCount ?? 0;
+  // null distinguishes "couldn't load the count" from a genuine 0 products,
+  // so the UI below can say so instead of quietly showing an empty catalog.
+  const products = productCountError ? null : productCount ?? 0;
 
   return (
     <div className="flex flex-col gap-8">
@@ -76,9 +78,13 @@ export default async function DashboardOverviewPage() {
               <Package size={16} />
             </span>
           </div>
-          <p className="mt-2 font-display text-3xl font-bold text-ink">{products}</p>
-          <p className="mt-1 text-xs text-jade">
-            {vendor.is_published ? 'Live and selling' : 'Not published yet'}
+          <p className="mt-2 font-display text-3xl font-bold text-ink">{products ?? '—'}</p>
+          <p className={`mt-1 text-xs ${products === null ? 'text-marigold' : 'text-jade'}`}>
+            {products === null
+              ? "Couldn't load — refresh to try again"
+              : vendor.is_published
+                ? 'Live and selling'
+                : 'Not published yet'}
           </p>
         </div>
 
@@ -104,9 +110,11 @@ export default async function DashboardOverviewPage() {
           <h2 className="font-display text-lg text-ink">Grow your catalog</h2>
         </div>
         <p className="mt-2 text-sm text-ink/60">
-          {products === 0
-            ? "You haven't added any products yet — your storefront needs at least one to give customers something to order."
-            : `You have ${products} product${products === 1 ? '' : 's'} live. More products give customers more reasons to order.`}
+          {products === null
+            ? "We couldn't load your product count just now — refresh the page to see it."
+            : products === 0
+              ? "You haven't added any products yet — your storefront needs at least one to give customers something to order."
+              : `You have ${products} product${products === 1 ? '' : 's'} live. More products give customers more reasons to order.`}
         </p>
         <Button as={Link} href="/dashboard/products/new" variant="marigold" size="md" className="mt-4">
           Add a product

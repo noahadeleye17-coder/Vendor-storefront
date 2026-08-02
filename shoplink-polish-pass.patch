@@ -1,0 +1,273 @@
+From adfa4cee820e7453912f023e05b695beb5225f36 Mon Sep 17 00:00:00 2001
+From: noahadeleye17-coder <noahadeleye17@gmail.com>
+Date: Sun, 2 Aug 2026 23:35:57 +0000
+Subject: [PATCH] Add loading/error/404 states and fix silent query-failure
+ handling across dashboard and storefront
+
+---
+ app/dashboard/error.js         | 30 ++++++++++++++++++++++++++++++
+ app/dashboard/loading.js       | 28 ++++++++++++++++++++++++++++
+ app/dashboard/page.js          | 24 ++++++++++++++++--------
+ app/dashboard/products/page.js | 11 ++++++++---
+ app/error.js                   | 29 +++++++++++++++++++++++++++++
+ app/not-found.js               | 23 +++++++++++++++++++++++
+ app/store/[slug]/page.js       |  8 +++++++-
+ 7 files changed, 141 insertions(+), 12 deletions(-)
+ create mode 100644 app/dashboard/error.js
+ create mode 100644 app/dashboard/loading.js
+ create mode 100644 app/error.js
+ create mode 100644 app/not-found.js
+
+diff --git a/app/dashboard/error.js b/app/dashboard/error.js
+new file mode 100644
+index 0000000..1219bec
+--- /dev/null
++++ b/app/dashboard/error.js
+@@ -0,0 +1,30 @@
++'use client';
++
++import { useEffect } from 'react';
++import { AlertTriangle } from 'lucide-react';
++import Button from '@/components/ui/Button';
++
++// Catches any error thrown while rendering a dashboard page (e.g. a failed
++// Supabase query) so a vendor sees a branded, actionable message instead of
++// a blank screen or Next.js's default error page.
++export default function DashboardError({ error, reset }) {
++  useEffect(() => {
++    console.error(error);
++  }, [error]);
++
++  return (
++    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line px-6 py-16 text-center">
++      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500/10 text-red-400">
++        <AlertTriangle className="h-5 w-5" />
++      </span>
++      <h2 className="mt-4 font-display text-xl text-ink">Something went wrong</h2>
++      <p className="mt-2 max-w-sm text-sm text-ink/60">
++        We couldn&apos;t load this page. Your store and data are fine — this was just a hiccup loading
++        it.
++      </p>
++      <Button type="button" variant="marigold" size="md" className="mt-6" onClick={reset}>
++        Try again
++      </Button>
++    </div>
++  );
++}
+diff --git a/app/dashboard/loading.js b/app/dashboard/loading.js
+new file mode 100644
+index 0000000..3d1cd13
+--- /dev/null
++++ b/app/dashboard/loading.js
+@@ -0,0 +1,28 @@
++// Shown automatically by Next.js while a dashboard page's server data is
++// still loading (e.g. switching tabs). Mirrors the general shape of the
++// overview page so the swap-in feels like a continuation, not a flash.
++function Block({ className }) {
++  return <div className={`animate-pulse rounded-2xl bg-white/[0.04] ${className}`} />;
++}
++
++export default function DashboardLoading() {
++  return (
++    <div className="flex flex-col gap-8">
++      <div className="flex flex-col gap-2">
++        <Block className="h-3 w-28" />
++        <Block className="h-8 w-48" />
++        <Block className="h-4 w-64" />
++      </div>
++
++      <Block className="h-32 w-full" />
++
++      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
++        <Block className="h-28 w-full" />
++        <Block className="h-28 w-full" />
++        <Block className="hidden h-28 w-full sm:block" />
++      </div>
++
++      <Block className="h-40 w-full" />
++    </div>
++  );
++}
+diff --git a/app/dashboard/page.js b/app/dashboard/page.js
+index a76ef54..c9c222b 100644
+--- a/app/dashboard/page.js
++++ b/app/dashboard/page.js
+@@ -26,13 +26,15 @@ export default async function DashboardOverviewPage() {
+     redirect('/login');
+   }
+ 
+-  const { count: productCount } = await supabase
++  const { count: productCount, error: productCountError } = await supabase
+     .from('products')
+     .select('id', { count: 'exact', head: true })
+     .eq('vendor_id', user.id);
+ 
+   const storeUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/store/${vendor.slug}`;
+-  const products = productCount ?? 0;
++  // null distinguishes "couldn't load the count" from a genuine 0 products,
++  // so the UI below can say so instead of quietly showing an empty catalog.
++  const products = productCountError ? null : productCount ?? 0;
+ 
+   return (
+     <div className="flex flex-col gap-8">
+@@ -76,9 +78,13 @@ export default async function DashboardOverviewPage() {
+               <Package size={16} />
+             </span>
+           </div>
+-          <p className="mt-2 font-display text-3xl font-bold text-ink">{products}</p>
+-          <p className="mt-1 text-xs text-jade">
+-            {vendor.is_published ? 'Live and selling' : 'Not published yet'}
++          <p className="mt-2 font-display text-3xl font-bold text-ink">{products ?? '—'}</p>
++          <p className={`mt-1 text-xs ${products === null ? 'text-marigold' : 'text-jade'}`}>
++            {products === null
++              ? "Couldn't load — refresh to try again"
++              : vendor.is_published
++                ? 'Live and selling'
++                : 'Not published yet'}
+           </p>
+         </div>
+ 
+@@ -104,9 +110,11 @@ export default async function DashboardOverviewPage() {
+           <h2 className="font-display text-lg text-ink">Grow your catalog</h2>
+         </div>
+         <p className="mt-2 text-sm text-ink/60">
+-          {products === 0
+-            ? "You haven't added any products yet — your storefront needs at least one to give customers something to order."
+-            : `You have ${products} product${products === 1 ? '' : 's'} live. More products give customers more reasons to order.`}
++          {products === null
++            ? "We couldn't load your product count just now — refresh the page to see it."
++            : products === 0
++              ? "You haven't added any products yet — your storefront needs at least one to give customers something to order."
++              : `You have ${products} product${products === 1 ? '' : 's'} live. More products give customers more reasons to order.`}
+         </p>
+         <Button as={Link} href="/dashboard/products/new" variant="marigold" size="md" className="mt-4">
+           Add a product
+diff --git a/app/dashboard/products/page.js b/app/dashboard/products/page.js
+index 7a38fb9..0c52d58 100644
+--- a/app/dashboard/products/page.js
++++ b/app/dashboard/products/page.js
+@@ -14,7 +14,7 @@ export default async function ProductsPage() {
+     data: { user },
+   } = await supabase.auth.getUser();
+ 
+-  const { data: products } = await supabase
++  const { data: products, error: productsError } = await supabase
+     .from('products')
+     .select('*')
+     .eq('vendor_id', user.id)
+@@ -30,7 +30,7 @@ export default async function ProductsPage() {
+         <div>
+           <h1 className="font-display text-2xl text-ink">Products</h1>
+           <p className="mt-1 text-sm text-ink/60">
+-            {count} of {FREE_TIER_LIMIT} used on the free plan
++            {productsError ? "Couldn't load your product count" : `${count} of ${FREE_TIER_LIMIT} used on the free plan`}
+           </p>
+         </div>
+         {count < FREE_TIER_LIMIT && (
+@@ -47,7 +47,12 @@ export default async function ProductsPage() {
+         </div>
+       </div>
+ 
+-      {count === 0 ? (
++      {productsError ? (
++        <EmptyState
++          title="Couldn't load your products"
++          description="Something went wrong fetching your catalog. Refresh the page to try again."
++        />
++      ) : count === 0 ? (
+         <EmptyState
+           title="No products yet"
+           description="Add your first product to start sharing your storefront link."
+diff --git a/app/error.js b/app/error.js
+new file mode 100644
+index 0000000..509e2a8
+--- /dev/null
++++ b/app/error.js
+@@ -0,0 +1,29 @@
++'use client';
++
++import { useEffect } from 'react';
++import { AlertTriangle } from 'lucide-react';
++import Button from '@/components/ui/Button';
++
++// Root-level error boundary — catches anything thrown outside the
++// dashboard segment (landing page, storefront, login/signup) that isn't
++// already handled by its own error.js.
++export default function GlobalError({ error, reset }) {
++  useEffect(() => {
++    console.error(error);
++  }, [error]);
++
++  return (
++    <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
++      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-400">
++        <AlertTriangle className="h-6 w-6" />
++      </span>
++      <h1 className="mt-6 font-display text-3xl text-ink">Something went wrong</h1>
++      <p className="mt-2 text-ink/60">
++        That was unexpected on our end. Give it another try, or head back home.
++      </p>
++      <Button type="button" variant="marigold" size="md" className="mt-6" onClick={reset}>
++        Try again
++      </Button>
++    </main>
++  );
++}
+diff --git a/app/not-found.js b/app/not-found.js
+new file mode 100644
+index 0000000..5f8488c
+--- /dev/null
++++ b/app/not-found.js
+@@ -0,0 +1,23 @@
++import Link from 'next/link';
++import { Compass } from 'lucide-react';
++import Button from '@/components/ui/Button';
++
++// Used whenever notFound() is called (e.g. an unknown /store/[slug], or a
++// product id that doesn't exist / isn't the vendor's own) as well as any
++// route that doesn't match — replaces Next.js's unstyled default 404.
++export default function NotFound() {
++  return (
++    <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
++      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-jade/10 text-jade">
++        <Compass className="h-6 w-6" />
++      </span>
++      <h1 className="mt-6 font-display text-3xl text-ink">Page not found</h1>
++      <p className="mt-2 text-ink/60">
++        This link may be broken, or the page has moved. Double-check the URL, or head back home.
++      </p>
++      <Button as={Link} href="/" variant="marigold" size="md" className="mt-6">
++        Back to ShopLink
++      </Button>
++    </main>
++  );
++}
+diff --git a/app/store/[slug]/page.js b/app/store/[slug]/page.js
+index d3cfa51..df11bc6 100644
+--- a/app/store/[slug]/page.js
++++ b/app/store/[slug]/page.js
+@@ -109,7 +109,7 @@ export default async function StorefrontPage({ params }) {
+     }
+   }
+ 
+-  const { data: products } = await supabase
++  const { data: products, error: productsError } = await supabase
+     .from('products')
+     .select('id, name, price, photo_url, in_stock')
+     .eq('vendor_id', vendor.id)
+@@ -202,6 +202,12 @@ export default async function StorefrontPage({ params }) {
+                   />
+                 ))}
+               </div>
++            ) : productsError ? (
++              <EmptyState
++                title="Catalog is taking a moment"
++                description="We couldn't load the products right now — try refreshing the page."
++                mode={theme.mode}
++              />
+             ) : (
+               <EmptyState
+                 title="No products yet"
+-- 
+2.43.0
+

@@ -14,7 +14,7 @@ export default async function ProductsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: products } = await supabase
+  const { data: products, error: productsError } = await supabase
     .from('products')
     .select('*')
     .eq('vendor_id', user.id)
@@ -30,7 +30,7 @@ export default async function ProductsPage() {
         <div>
           <h1 className="font-display text-2xl text-ink">Products</h1>
           <p className="mt-1 text-sm text-ink/60">
-            {count} of {FREE_TIER_LIMIT} used on the free plan
+            {productsError ? "Couldn't load your product count" : `${count} of ${FREE_TIER_LIMIT} used on the free plan`}
           </p>
         </div>
         {count < FREE_TIER_LIMIT && (
@@ -47,7 +47,12 @@ export default async function ProductsPage() {
         </div>
       </div>
 
-      {count === 0 ? (
+      {productsError ? (
+        <EmptyState
+          title="Couldn't load your products"
+          description="Something went wrong fetching your catalog. Refresh the page to try again."
+        />
+      ) : count === 0 ? (
         <EmptyState
           title="No products yet"
           description="Add your first product to start sharing your storefront link."

@@ -109,7 +109,7 @@ export default async function StorefrontPage({ params }) {
     }
   }
 
-  const { data: products } = await supabase
+  const { data: products, error: productsError } = await supabase
     .from('products')
     .select('id, name, price, photo_url, in_stock')
     .eq('vendor_id', vendor.id)
@@ -202,6 +202,12 @@ export default async function StorefrontPage({ params }) {
                   />
                 ))}
               </div>
+            ) : productsError ? (
+              <EmptyState
+                title="Catalog is taking a moment"
+                description="We couldn't load the products right now — try refreshing the page."
+                mode={theme.mode}
+              />
             ) : (
               <EmptyState
                 title="No products yet"
