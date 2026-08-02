@@ -11,11 +11,54 @@ export async function generateMetadata({ params }) {
   const supabase = createClient();
   const { data: vendor } = await supabase
     .from('vendors')
-    .select('business_name')
+    .select('id, business_name, logo_url, is_published')
     .eq('slug', params.slug)
     .single();
 
-  return { title: vendor ? `${vendor.business_name} — Storefront` : 'Storefront' };
+  if (!vendor) {
+    return { title: 'Storefront' };
+  }
+
+  const { count } = await supabase
+    .from('products')
+    .select('id', { count: 'exact', head: true })
+    .eq('vendor_id', vendor.id);
+  const productCount = count ?? 0;
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const storeUrl = `${appUrl}/store/${params.slug}`;
+
+  const title = `${vendor.business_name} — Shop on WhatsApp`;
+  const description =
+    productCount > 0
+      ? `Browse ${productCount} product${productCount === 1 ? '' : 's'} from ${vendor.business_name} and order straight from WhatsApp — no app, no account.`
+      : `Order from ${vendor.business_name} straight from WhatsApp — no app, no account.`;
+
+  // Vendor's own logo when they've uploaded one (already a full public
+  // Supabase storage URL), otherwise the branded ShopLink fallback card so
+  // every store link still previews well before a vendor customizes anything.
+  const ogImage = vendor.logo_url || `${appUrl}/images/store-og-default.png`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: storeUrl,
+      siteName: 'ShopLink',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${vendor.business_name} on ShopLink` }],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+    // Unpublished/preview stores shouldn't be indexed or surfaced in search.
+    robots: vendor.is_published ? undefined : { index: false, follow: false },
+  };
 }
 
 export default async function StorefrontPage({ params }) {
