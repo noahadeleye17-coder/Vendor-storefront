@@ -2,15 +2,31 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 import { getFontFamily } from '@/lib/themePresets';
-import LogoUploader from './LogoUploader';
 
-export default function StorefrontHeader({ vendor, mode = 'dark', isOwner = false }) {
-  const { id, business_name, logo_url, whatsapp_number, theme_color, theme_font } = vendor;
+export default function StorefrontHeader({ vendor, mode = 'dark' }) {
+  const { business_name, logo_url, whatsapp_number, theme_color, theme_font } = vendor;
   const isLight = mode === 'light';
 
   return (
-    <header className="flex flex-col items-center gap-4 py-10 text-center">
-      <div className="relative">
+    <header className="relative flex flex-col items-center gap-4 overflow-hidden py-10 text-center">
+      {/* Subtle full-bleed echo of the logo behind the header — keeps the
+          header from looking bare when a vendor uploads a wide/non-square
+          image, without affecting the always-cropped square slot below. */}
+      {logo_url && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-0"
+          style={{
+            backgroundImage: `url(${logo_url})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(40px)',
+            transform: 'scale(1.2)',
+            opacity: isLight ? 0.12 : 0.2,
+          }}
+        />
+      )}
+      <div className="relative z-10">
         <div
           className={clsx(
             'flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl shadow-card',
@@ -26,11 +42,10 @@ export default function StorefrontHeader({ vendor, mode = 'dark', isOwner = fals
             </span>
           )}
         </div>
-        {isOwner && <LogoUploader vendorId={id} />}
       </div>
 
       <h1
-        className={clsx('font-display text-2xl', isLight ? 'text-onLight' : 'text-ink')}
+        className={clsx('relative z-10 font-display text-2xl', isLight ? 'text-onLight' : 'text-ink')}
         style={{ fontFamily: theme_font ? getFontFamily(theme_font) : undefined }}
       >
         {business_name}
@@ -42,7 +57,7 @@ export default function StorefrontHeader({ vendor, mode = 'dark', isOwner = fals
           target="_blank"
           rel="noopener noreferrer"
           className={clsx(
-            'inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-sm',
+            'relative z-10 inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-sm',
             isLight ? 'border-line text-onLight/80' : 'border-line text-ink/80'
           )}
         >

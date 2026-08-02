@@ -8,6 +8,7 @@ import { getFriendlyError } from '@/lib/friendlyError';
 import Input from './ui/Input';
 import Button from './ui/Button';
 import ThemePicker from './ThemePicker';
+import LogoSettings from './LogoSettings';
 
 export default function SettingsForm({ vendor, appUrl }) {
   const router = useRouter();
@@ -88,6 +89,11 @@ export default function SettingsForm({ vendor, appUrl }) {
         <div>
           <h2 className="font-display text-lg text-ink">Store details</h2>
           <p className="mt-0.5 text-sm text-ink/60">Update your storefront's details, look and visibility.</p>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-ink">Store logo</label>
+          <LogoSettings vendorId={vendor.id} businessName={form.businessName} initialLogoUrl={vendor.logo_url} />
         </div>
 
         <Input

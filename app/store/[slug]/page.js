@@ -127,7 +127,7 @@ export default async function StorefrontPage({ params }) {
               }}
             />
             <div className="relative">
-              <StorefrontHeader vendor={vendor} mode={theme.mode} isOwner={isOwner} />
+              <StorefrontHeader vendor={vendor} mode={theme.mode} />
             </div>
           </div>
 

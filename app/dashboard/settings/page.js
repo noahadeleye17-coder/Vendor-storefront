@@ -15,7 +15,7 @@ export default async function SettingsPage() {
 
   const { data: vendor } = await supabase
     .from('vendors')
-    .select('id, business_name, slug, whatsapp_number, theme_color, theme_font, is_published')
+    .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, theme_font, is_published')
     .eq('id', user.id)
     .single();
 
