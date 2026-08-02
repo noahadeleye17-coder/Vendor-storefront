@@ -26,6 +26,13 @@ export default function PhoneMockup({ className = '' }) {
         className="relative mx-auto w-[280px] sm:w-[320px]"
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          // fades the bottom ~15% of the image (where the wrist/arm is cut
+          // off) into transparency, so it dissolves into the page's dark
+          // background instead of reading as a pasted-on cutout
+          WebkitMaskImage: 'linear-gradient(to bottom, black 82%, transparent 98%)',
+          maskImage: 'linear-gradient(to bottom, black 82%, transparent 98%)',
+        }}
       >
         <Image
           src="/images/hand-phone-hero.png"

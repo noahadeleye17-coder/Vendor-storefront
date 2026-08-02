@@ -48,7 +48,7 @@ export default function HomePage() {
   return (
     <main className="overflow-hidden">
       {/* ---------- Hero ---------- */}
-      <section className="relative mx-auto flex max-w-6xl flex-col items-center gap-16 px-6 pb-24 pt-20 md:flex-row md:items-center md:pt-28">
+      <section className="relative mx-auto flex max-w-6xl flex-col items-center gap-16 px-6 pb-8 pt-20 md:flex-row md:items-center md:pb-16 md:pt-28">
         <motion.div
           initial="hidden"
           animate="show"
@@ -100,7 +100,7 @@ export default function HomePage() {
       {/* ---------- How it works ---------- */}
       <section
         id="how-it-works"
-        className="py-24"
+        className="pb-24 pt-8 md:pt-12"
         style={{
           background:
             'linear-gradient(to bottom, transparent, rgba(255,255,255,0.03) 15%, rgba(255,255,255,0.03) 85%, transparent)',

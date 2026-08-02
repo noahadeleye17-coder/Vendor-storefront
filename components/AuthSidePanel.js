@@ -16,7 +16,13 @@ export default function AuthSidePanel() {
         }}
       />
 
-      <div className="relative w-[70%] max-w-sm">
+      <div
+        className="relative w-[70%] max-w-sm"
+        style={{
+          WebkitMaskImage: 'linear-gradient(to bottom, black 82%, transparent 98%)',
+          maskImage: 'linear-gradient(to bottom, black 82%, transparent 98%)',
+        }}
+      >
         <Image
           src="/images/hand-phone-hero.png"
           alt="A hand holding a phone showing the ShopLink vendor dashboard"
