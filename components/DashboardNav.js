@@ -38,7 +38,7 @@ export default function DashboardNav({ businessName }) {
         </Button>
       </div>
 
-      <nav className="mx-auto flex max-w-5xl px-6 pb-4">
+      <nav className="mx-auto max-w-5xl overflow-x-auto px-6 pb-4">
         <div className="inline-flex gap-1 rounded-full border border-line p-1">
           {TABS.map((tab) => {
             const active = pathname === tab.href;
@@ -46,7 +46,7 @@ export default function DashboardNav({ businessName }) {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                className={`shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-sm font-medium transition-colors ${
                   active ? 'bg-ink text-paper' : 'text-ink/60 hover:text-ink'
                 }`}
               >
