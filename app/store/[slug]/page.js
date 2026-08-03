@@ -199,6 +199,7 @@ export default async function StorefrontPage({ params }) {
                     product={product}
                     whatsappNumber={vendor.whatsapp_number}
                     storeName={vendor.business_name}
+                    mode={theme.mode}
                   />
                 ))}
               </div>

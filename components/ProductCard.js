@@ -1,12 +1,19 @@
+import clsx from 'clsx';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/whatsappLink';
 import WhatsAppOrderButton from './WhatsAppOrderButton';
 
-export default function ProductCard({ product, whatsappNumber, storeName }) {
+export default function ProductCard({ product, whatsappNumber, storeName, mode = 'dark' }) {
   const { name, price, photo_url, in_stock } = product;
+  const isLight = mode === 'light';
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white/60 backdrop-blur-sm transition-shadow hover:shadow-card">
+    <div
+      className={clsx(
+        'group flex flex-col overflow-hidden rounded-2xl border border-line backdrop-blur-sm transition-shadow hover:shadow-card',
+        isLight ? 'bg-white/60' : 'bg-white/5'
+      )}
+    >
       <div className="relative aspect-square w-full overflow-hidden bg-line">
         {photo_url ? (
           <Image
@@ -33,7 +40,9 @@ export default function ProductCard({ product, whatsappNumber, storeName }) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="font-display text-base leading-snug text-onLight">{name}</h3>
+          <h3 className={clsx('font-display text-base leading-snug', isLight ? 'text-onLight' : 'text-ink')}>
+            {name}
+          </h3>
           <p className="mt-1 font-mono text-sm text-jade">₦{formatPrice(price)}</p>
         </div>
 
