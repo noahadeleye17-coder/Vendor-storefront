@@ -10,7 +10,7 @@ import Button from './ui/Button';
 
 // Lets a vendor set, replace, or remove their storefront logo from
 // Settings. Reuses the same `vendor-media` bucket ProductForm uploads to.
-export default function LogoSettings({ vendorId, businessName, initialLogoUrl }) {
+export default function LogoSettings({ vendorId, businessName, initialLogoUrl, onLogoChange }) {
   const router = useRouter();
   const inputRef = useRef(null);
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl || null);
@@ -40,6 +40,7 @@ export default function LogoSettings({ vendorId, businessName, initialLogoUrl })
       if (updateError) throw updateError;
 
       setLogoUrl(data.publicUrl);
+      onLogoChange?.(data.publicUrl);
       router.refresh();
     } catch (err) {
       setError(getFriendlyError(err));
@@ -61,6 +62,7 @@ export default function LogoSettings({ vendorId, businessName, initialLogoUrl })
       if (updateError) throw updateError;
 
       setLogoUrl(null);
+      onLogoChange?.(null);
       router.refresh();
     } catch (err) {
       setError(getFriendlyError(err));
