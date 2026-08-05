@@ -33,7 +33,7 @@ export default function AIAssistantToggle({ vendorId, initialEnabled }) {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-4">
       <button
         type="button"
         role="switch"
@@ -41,18 +41,18 @@ export default function AIAssistantToggle({ vendorId, initialEnabled }) {
         onClick={toggle}
         disabled={saving}
         className={clsx(
-          'relative h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-50',
+          'relative inline-block h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-50',
           enabled ? 'bg-jade' : 'bg-line'
         )}
       >
         <span
           className={clsx(
-            'absolute top-1 h-5 w-5 rounded-full bg-paper transition-transform',
-            enabled ? 'translate-x-6' : 'translate-x-1'
+            'absolute left-1 top-1 h-5 w-5 rounded-full bg-paper transition-transform',
+            enabled ? 'translate-x-5' : 'translate-x-0'
           )}
         />
       </button>
-      <span className="text-sm text-ink/70">
+      <span className="whitespace-nowrap text-sm text-ink/70">
         {enabled ? 'Live on your storefront' : 'Off — not visible to shoppers'}
       </span>
       {error && <span className="text-xs text-red-500">{error}</span>}
