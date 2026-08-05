@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabaseServer';
 import StorefrontHeader from '@/components/StorefrontHeader';
 import ProductCard from '@/components/ProductCard';
 import EmptyState from '@/components/ui/EmptyState';
+import StorefrontChat from '@/components/StorefrontChat';
 import { getThemePreset } from '@/lib/themePresets';
 
 export async function generateMetadata({ params }) {
@@ -76,7 +77,7 @@ export default async function StorefrontPage({ params }) {
 
   const { data: vendor } = await supabase
     .from('vendors')
-    .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, theme_font, is_published')
+    .select('id, business_name, slug, whatsapp_number, logo_url, theme_color, theme_font, is_published, ai_chat_enabled')
     .eq('slug', params.slug)
     .single();
 
@@ -233,6 +234,10 @@ export default async function StorefrontPage({ params }) {
           &copy; {new Date().getFullYear()} {vendor.business_name} · Storefront by ShopLink
         </p>
       </div>
+
+      {vendor.ai_chat_enabled && (
+        <StorefrontChat slug={vendor.slug} businessName={vendor.business_name} mode={theme.mode} />
+      )}
     </div>
   );
 }

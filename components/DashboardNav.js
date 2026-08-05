@@ -9,6 +9,7 @@ import Button from './ui/Button';
 const TABS = [
   { href: '/dashboard', label: 'Overview' },
   { href: '/dashboard/products', label: 'Products' },
+  { href: '/dashboard/ai-assistant', label: 'AI Assistant' },
   { href: '/dashboard/settings', label: 'Settings' },
 ];
 
