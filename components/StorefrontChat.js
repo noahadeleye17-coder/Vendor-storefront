@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { buildWhatsAppOrderLink, formatPrice } from '@/lib/whatsappLink';
 
-export default function StorefrontChat({ slug, businessName, mode = 'dark' }) {
+export default function StorefrontChat({ slug, businessName, mode = 'dark', hasProducts = true }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -41,6 +41,14 @@ export default function StorefrontChat({ slug, businessName, mode = 'dark' }) {
         }),
       });
       const data = await res.json();
+
+      if (res.status === 429) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.error }]);
+        return;
+      }
+      if (!res.ok) {
+        throw new Error(data.error || 'Request failed');
+      }
 
       setMessages((prev) => [
         ...prev,
@@ -86,7 +94,9 @@ export default function StorefrontChat({ slug, businessName, mode = 'dark' }) {
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
             {messages.length === 0 && (
               <p className={clsx('text-sm', isLight ? 'text-onLight/50' : 'text-ink/50')}>
-                Ask about a product — price, stock, whatever you need to know.
+                {hasProducts
+                  ? 'Ask about a product — price, stock, whatever you need to know.'
+                  : `${businessName} hasn't added any products yet, but you can still ask a question.`}
               </p>
             )}
 
@@ -126,8 +136,17 @@ export default function StorefrontChat({ slug, businessName, mode = 'dark' }) {
 
             {loading && (
               <div className="flex justify-start">
-                <div className={clsx('rounded-2xl px-3 py-2 text-sm', isLight ? 'bg-black/5 text-onLight/60' : 'bg-white/10 text-ink/60')}>
-                  Typing…
+                <div
+                  className={clsx('flex items-center gap-1 rounded-2xl px-3 py-3', isLight ? 'bg-black/5' : 'bg-white/10')}
+                  aria-label="Assistant is typing"
+                >
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className={clsx('h-1.5 w-1.5 animate-bounce rounded-full', isLight ? 'bg-onLight/40' : 'bg-ink/40')}
+                      style={{ animationDelay: `${i * 150}ms` }}
+                    />
+                  ))}
                 </div>
               </div>
             )}
@@ -137,7 +156,7 @@ export default function StorefrontChat({ slug, businessName, mode = 'dark' }) {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Do you have..."
+              placeholder={hasProducts ? 'Do you have...' : 'Ask a question...'}
               maxLength={500}
               className={clsx(
                 'flex-1 rounded-full border border-line bg-transparent px-3 py-2 text-sm outline-none',

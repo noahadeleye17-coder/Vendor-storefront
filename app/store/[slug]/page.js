@@ -236,7 +236,12 @@ export default async function StorefrontPage({ params }) {
       </div>
 
       {vendor.ai_chat_enabled && (
-        <StorefrontChat slug={vendor.slug} businessName={vendor.business_name} mode={theme.mode} />
+        <StorefrontChat
+          slug={vendor.slug}
+          businessName={vendor.business_name}
+          mode={theme.mode}
+          hasProducts={!!products?.some((p) => p.in_stock)}
+        />
       )}
     </div>
   );
